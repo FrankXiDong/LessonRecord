@@ -1,0 +1,54 @@
+{
+    "name": "LessonRecord1",
+    "records": [
+        {
+            "subject": "语文",
+            "lessons": [
+                0,
+                0
+            ]
+        },
+        {
+            "subject": "数学",
+            "lessons": [
+                0,
+                0
+            ]
+        },
+        {
+            "subject": "英语",
+            "lessons": [
+                0,
+                0
+            ]
+        },
+        {
+            "subject": "历史",
+            "lessons": [
+                0,
+                0
+            ]
+        },
+        {
+            "subject": "道德与法治",
+            "lessons": [
+                0,
+                0
+            ]
+        },
+        {
+            "subject": "物理",
+            "lessons": [
+                0,
+                0
+            ]
+        },
+        {
+            "subject": "化学",
+            "lessons": [
+                0,
+                0
+            ]
+        }
+    ]
+}
