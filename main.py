@@ -3,6 +3,7 @@ from tkinter import ttk
 
 sub=""
 Entry=""
+com=""
 
 def load():
     global data,setting,subjects
@@ -16,7 +17,7 @@ def load():
         subjects.append(record["subject"])
 
 def main():
-    global data,setting,subjects,sub,Entry
+    global data,setting,subjects,sub,Entry,com
 
     top = tkinter.Tk()
     top.title("记录器v"+setting['version'])
@@ -44,19 +45,19 @@ def main():
     top.mainloop()
 
 def record():
-    global sub,data,Entry
+    global data, Entry, com  # 添加 com 到全局变量
+    sub = com.get()  # 重新获取下拉菜单的当前值
     for record in data["records"]:
         if record["subject"] == sub:
             try:
                 time = int(Entry.get())
-            except:
-                tkinter.messagebox.showinfo(title='错误提示',
-            		message='您输入的数据不合法，请检查是否为阿拉伯数字、是否为空！') 
-                break
-                
-            record["lessons"].append(int(Entry.get()))
+            except ValueError:
+                tkinter.messagebox.showinfo(title='错误提示', message='您输入的数据不合法，请检查是否为阿拉伯数字、是否为空！')
+                return  # 如果输入不合法，直接返回，不再继续执行
+
+            record["lessons"].append(time)
             print("[info] 记录成功！")
-            break
+            return
 
 def save():
     file_name=data['name']+'.json'
