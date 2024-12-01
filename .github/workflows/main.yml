@@ -47,6 +47,6 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          dist/your_script.exe
+          dist/main.exe
           LessonRecord1.json
           setting.json
