@@ -1,6 +1,7 @@
 import json,os,tkinter
 from tkinter import ttk
 
+# 初始化全局变量
 sub=""
 Entry=""
 com=""
@@ -21,27 +22,28 @@ def main():
 
     top = tkinter.Tk()
     top.title("记录器v"+setting['version'])
-    top.geometry("300x150")
-    top.resizable(0,0)
+    top.geometry("500x300")
+    #top.resizable(0,0) # 防止用户调整窗口大小
 
     label = tkinter.Label(top, text="欢迎使用记录器v"+setting['version']+"！")
-    label.grid(row=0, columnspan=2)# 显示欢迎信息
-
-    xVariable = tkinter.StringVar()     # #创建变量，便于取值
     
-    com = ttk.Combobox(top, textvariable=xVariable)     # #创建下拉菜单
-    com.grid(row=1, column=0, columnspan=2)  # #将下拉菜单绑定到窗体
-    com["value"] = subjects    # #给下拉菜单设定值
-    com.current(0)    #设定下拉菜单的默认值
+    xVariable = tkinter.StringVar()     # 创建变量，便于取值
+    com = ttk.Combobox(top, textvariable=xVariable)     # 创建下拉菜单
+    com["value"] = subjects    # 给下拉菜单设定值
+    com.current(0)    # 设定下拉菜单的默认值
     sub = com.get()
 
     Entry = tkinter.Entry(top, show=None)
-    Entry.grid(row=2, column=0, columnspan=2)
 
     record_button = tkinter.Button(top, text="记录", command=record) 
     save_button = tkinter.Button(top, text="保存", command=save)
+
+    label.grid(row=0, columnspan=2)# 显示欢迎信息
+    com.grid(row=1, column=0, columnspan=2)  # #将下拉菜单绑定到窗体
+    Entry.grid(row=2, column=0, columnspan=2)
     record_button.grid(row=3, column=0)
     save_button.grid(row=3, column=1)
+
     top.mainloop()
 
 def record():
