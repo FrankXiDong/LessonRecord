@@ -1,7 +1,7 @@
 import json
 import os
 import tkinter
-from tkinter import ttk, messagebox, font
+from tkinter import ttk, messagebox, font, simpledialog
 
 # 初始化全局变量
 sub = ""
@@ -46,11 +46,15 @@ def main():
     menubar.add_cascade(label="文件", menu=file_menu)
     file_menu.add_command(label="保存", command=save)
     file_menu.add_separator()  # 添加分割线
+    file_menu.add_command(label="新增学科", command=add_subject)
+    file_menu.add_separator()  # 添加分割线
+    file_menu.add_command(label="清空数据", command=clear_data)
+    file_menu.add_separator()  # 添加分割线
+    file_menu.add_command(label="统计信息", command=load_num)
+    file_menu.add_separator()  # 添加分割线
     file_menu.add_command(label="退出", command=top.quit)
     file_menu.add_separator()  # 添加分割线
     file_menu.add_command(label="关于", command=about)
-    file_menu.add_separator()  # 添加分割线
-    file_menu.add_command(label="统计信息", command=load_num)
 
     label = tkinter.Label(top, text="欢迎使用记录器v" + setting['version'] + "！", font=("HarmonyOS Sans SC", 14, "bold"))
 
@@ -114,13 +118,37 @@ def load_num():
 
     messagebox.showinfo(title='统计信息', message=message)
 
-
 def save():
     file_name = data['name'] + '.json'
     with open(file_name, 'w', encoding='utf-8') as json_file:
         json.dump(data, json_file, ensure_ascii=False, indent=4)
     print("\n[info] json文件保存完毕！")
 
+def add_subject():
+    global data, subjects, com
+
+    new_subject = simpledialog.askstring("新增学科", "请输入新的学科名称:")
+    if new_subject and new_subject not in subjects:
+        subjects.append(new_subject)
+        data["records"].append({"subject": new_subject, "lessons": []})
+        com["values"] = subjects
+        com.current(len(subjects) - 1)
+        save()
+        messagebox.showinfo(title='成功', message=f'学科 "{new_subject}" 已成功添加！')
+    elif new_subject in subjects:
+        messagebox.showinfo(title='错误提示', message=f'学科 "{new_subject}" 已存在！')
+    else:
+        messagebox.showinfo(title='错误提示', message='请输入有效的学科名称！')
+
+def clear_data():
+    global data, subjects, com
+
+    confirm = messagebox.askyesno("确认清空数据", "您确定要清空所有时间记录吗？")
+    if confirm:
+        for record in data["records"]:
+            record["lessons"] = []  # 清空每个学科的时间记录
+        save()
+        messagebox.showinfo(title='成功', message='所有时间记录已成功清空！')
 
 if __name__ == '__main__':
     load()
