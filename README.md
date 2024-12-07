@@ -10,15 +10,15 @@ master分支为稳定分支，GUI界面使用tkinter框架（py自带）。
 
 #### 安装教程
 
-'''shell
+```shell
 pip install -r requirements.txt
-'''
+```
 
 或者分别安装：
 
-'''shell
+```shell
 pip install PyQt5
-'''
+```
 
 
 #### 使用说明
