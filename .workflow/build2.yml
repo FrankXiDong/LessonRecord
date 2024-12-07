@@ -1,53 +1,73 @@
-version: '1.0'
-name: build2
-displayName: build2
-triggers:
-  trigger: auto
+name: Build and Release
+
+on:
   push:
     branches:
-      prefix:
-        - ''
+      - '*'  # 监测所有分支
     tags:
-      prefix:
-        - ''
-  pr:
+      - '*'  # 监测所有 tag
+  pull_request:
     branches:
-      prefix:
-        - ''
-stages:
-  - name: stage-c03e954d
-    displayName: 构建
-    strategy: naturally
-    trigger: auto
-    executor: []
+      - '*'  # 监测所有分支
+
+jobs:
+  build:
+    runs-on: windows-latest
+
     steps:
-      - step: build@python
-        name: build_python
-        displayName: Python 构建
-        pythonVersion: '3.9'
-        commands:
-          - pip install -r requirements.txt
-          - pip install pyinstaller
-          - pyinstaller --onefile main.py
-        artifacts:
-          - name: BUILD_ARTIFACT
-            path:
-              - ./
-        caches: []
-        notify: []
-        strategy:
-          retry: '0'
-  - name: stage-156f036e
-    displayName: 转存
-    strategy: naturally
-    trigger: auto
-    executor: []
-    steps:
-      - step: publish@general_artifacts
-        name: publish_general_artifacts
-        displayName: 上传制品
-        dependArtifact: BUILD_ARTIFACT
-        artifactName: LessonRecord
-        notify: []
-        strategy:
-          retry: '0'
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Install PyInstaller
+      run: |
+        pip install pyinstaller
+
+    - name: Build executable
+      run: |
+        pyinstaller --onefile main.py
+
+    - name: Create zip archive
+      run: |
+        mkdir dist/release
+        cp dist/main.exe dist/release/
+        cp LessonRecord.json dist/release/
+        cp setting.json dist/release/
+        cd dist
+        zip -r release.zip release
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: your_script-release
+        path: dist/release.zip
+
+    - name: Get tag name
+      id: get_tag
+      run: echo "::set-output name=tag::${GITHUB_REF#refs/tags/}"
+
+    - name: Get commits
+      id: get_commits
+      run: |
+        git log --oneline ${{ steps.get_tag.outputs.tag }}..HEAD | awk '{print "- " $0}' > commits.txt
+
+    - name: Release
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: softprops/action-gh-release@v1
+      with:
+        name: Release ${{ steps.get_tag.outputs.tag }}
+        body: |
+          This is a custom release for tag ${{ steps.get_tag.outputs.tag }}.
+
+          ### Commits
+          ${{ steps.get_commits.outputs.commits }}
+        files: |
+          dist/release.zip
