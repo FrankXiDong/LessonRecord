@@ -1,0 +1,14 @@
+stages:
+  - build
+
+build:
+  stage: build
+  image: python:3.8
+  script:
+    - pip install --upgrade pip
+    - pip install -r requirements.txt
+    - pip install pyinstaller
+    - pyinstaller --onefile main.py
+  artifacts:
+    paths:
+      - dist/main.exe
